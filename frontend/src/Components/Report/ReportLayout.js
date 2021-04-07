@@ -47,8 +47,8 @@ return(
             <SideNav.Nav defaultSelected="backlog">
 
                 <NavItem eventKey="home">
-                    <NavIcon>
-                    <NavLink to={"/Manager"}>  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} /></NavLink>
+                <NavIcon>
+                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
                     </NavIcon>
                     <NavText>
                     <NavLink to={"/Manager"}> Home</NavLink>
@@ -61,8 +61,10 @@ return(
                         <i className="fa fa-fw fa-line-chart" style={{ fontSize: '1.75em' }} />
                     </NavIcon>
                     <NavText>
+                    <NavLink to={"/Manager/ReportDashboard"}> 
                         Reports
-                      </NavText>
+                    </NavLink>
+                    </NavText>
 
                     <NavItem eventKey="reports/Report Dashboard">
                         <NavText>
@@ -81,7 +83,7 @@ return(
                     </NavItem>
                     <NavItem eventKey="reports/Full bug summary">
                         <NavText>
-                            Full Bug Summary
+                        <NavLink to={"/Manager/Bug_Summary"}>Full Bug Summary</NavLink>
                         </NavText>
                     </NavItem>
 

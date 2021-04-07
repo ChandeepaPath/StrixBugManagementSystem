@@ -9,12 +9,16 @@ import "jspdf-autotable";
 import { useForm, Controller } from "react-hook-form";
 import {BsDownload} from 'react-icons/bs';
 import {RiDeleteBin6Line} from 'react-icons/ri';
-import {MdTimer,MdQuestionAnswer} from 'react-icons/md';
+import {GrProjects,GrFilter} from 'react-icons/gr';
+import {MdTimer,MdQuestionAnswer,MdDeveloperBoard} from 'react-icons/md';
 import {FaFilePdf,FaFileExcel,FaFileCsv} from 'react-icons/fa';
-import { Card ,Button, NavDropdown, Collapse,Badge,Modal} from 'react-bootstrap'
+import {CgCalendarDates} from 'react-icons/cg'
+import {FaBuromobelexperte} from 'react-icons/fa'
+import { Card ,Button, NavDropdown, Collapse,Badge,Modal, Row} from 'react-bootstrap'
 import DatePicker from 'react-datepicker';
 import AsyncSelect from 'react-select/async';
 import {IoMdArrowDropdown} from 'react-icons/io'
+import API from '../../../../Services/Base';
 
 function FilreredData() {
 
@@ -40,10 +44,17 @@ function FilreredData() {
     
       // load options using API call
       const loadOptions = (inputValue) => {
-        return fetch(`http://127.0.0.1:8000/api/Dev_Users?userId=${inputValue}`).then(res => res.json());
+        return fetch(`http://127.0.0.1:8000/api/Dev_Users?userId=${inputValue}`)
+        .then(res => res.json());
       };
     // set value for default selection
   
+
+  //----------------This is for the Projects DropDown List------------------------
+
+  
+//--------------------------------------------------------------------------------
+
     const [devT, devTstate] = useState([])
 
     useEffect(() => {
@@ -64,266 +75,113 @@ function FilreredData() {
     //===============================Filtering by date and Developer name===============================
     
     const [final, setFinal] = useState([])
-    const [cn,setCn] = useState()
-    const [hCon, setHcon] = useState()
-    const [lCon, setLcon] = useState()
+    const [cn,setCn] = useState(0)
+    const [hCon, setHcon] = useState(0)
+    const [nodata, setNodata] = useState(false)
+    const noddataHandle = () => setNodata(false);
+
     const onSubmit = (data) => {
         setSubmittedData(data);
-        console.log(data);
-    
-
-    let developers = data.devDropDown
-    console.log(developers)
-
-    const f = devT.map(e=>e.date)
-    const d = devT.map(e=>e.username)
-    const id = devT.map(e=> e.user_id)
-    const e = devT.map(e=> e.email)
-    const da = devT.map(e=> e.dailyeffort)
-    const fn = devT.map(e=> e.firstname)
-    const ti = devT.map(e=> e.ticket_id)
-    const tn = devT.map(e=>e.issuename)
-    console.log(f)
-    console.log(d)
-    console.log(id + " "+ e + " " +da)
-    let count =0
-    let countF =0
-    let daDev=[null]
-        if( developers == null){
-                          if(data.startDate == undefined && data.endDate == undefined ){
-
-                            alert("Add Required Filters");
-                        
-                          }
-                        else if(data.startDate==undefined){
-                          for(let i = 0 ; i<f.length ;i++) {
-                      
-                            if(f[i] <= data.endDate.toISOString()){
-                                console.log(f[i]+ " " + d[i])
-                            let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], dailyeffort:da[i],ticket_id:ti[i],issuename:tn[i], date:f[i]}
-                             let arr = final.push(obj)
-                            setFinal([ ...final,{
-                                id : final.length,
-                                value: arr
-                            }])
-                            console.log(final)
-                            count =  count + da[i]
-                            daDev[i]= da[i];
-                            let sortDev = daDev.sort((a,b)=>b-a);
-                            let hCon= sortDev[0];
-                            setHcon(hCon);
-                            console.log(sortDev);
-                            }
-                            setCn(count)
-                            }
-                        }else if(data.endDate==undefined){
-                          for(let i = 0 ; i<f.length ;i++) {
-                            if(f[i] >= data.startDate.toISOString()){
-                                console.log(f[i]+ " " + d[i])
-                            let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], dailyeffort:da[i],ticket_id:ti[i],issuename:tn[i], date:f[i]}
-                            let arr = final.push(obj)
-                            setFinal([ ...final,{
-                                id : final.length,
-                                value: arr
-                            }])
-                            console.log(final)
-                            count =  count + da[i]
-                            daDev[i]= da[i];
-                            let sortDev = daDev.sort((a,b)=>b-a);
-                            let hCon= sortDev[0];
-                            setHcon(hCon);
-                            console.log(sortDev);
-                        }
-                        setCn(count)
-                        }
-                        }else{
-                          for(let i = 0 ; i<f.length ;i++) {
-                      
-                            if(f[i]>= data.startDate.toISOString()  && f[i] <= data.endDate.toISOString()){
-                                console.log(f[i]+ " " + d[i])
-                               let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], dailyeffort:da[i],ticket_id:ti[i],issuename:tn[i], date:f[i]}
-                               let arr = final.push(obj)
-                            setFinal([ ...final,{
-                                id : final.length,
-                                value: arr
-                            }])
-                            console.log(final)
-                            count =  count + da[i]
-                            daDev[i]= da[i];
-                            let sortDev = daDev.sort((a,b)=>b-a);
-                            let hCon= sortDev[0];
-                            setHcon(hCon);
-                            console.log(sortDev);
-                        }
-                        setCn(count)
-                      }
-                }
-      }else if(data.startDate == undefined && data.endDate == undefined){
-        for(let j=0; j<developers.length; j++){
        
-          for(let i = 0 ; i<f.length ;i++) {
-              if( d[i]=== developers[j].username){
-                  console.log(f[i]+ " " + d[i])
-              let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], email:e[i], dailyeffort:da[i], ticket_id:ti[i],issuename:tn[i],date:f[i]}
-              let arr = final.push(obj)
-              setFinal([ ...final,{
-                  id : final.length,
-                  value: arr
-              }])
-              console.log(final)
-              count =  count + da[i]
-              daDev[i]= da[i];
-              let sortDev = daDev.sort((a,b)=>b-a);
-              let hCon= sortDev[0];
-               setHcon(hCon);
-              console.log(sortDev);
-           }
-          console.log(count + " " + hCon)  
-            setCn(count)
+     
+      
+        const article = { 
+          "projectid": data.projectid ,
+          "devid" : data.devDropDown == null ? []: data.devDropDown.map(e=> e.id) ,
+          "from": data.startDate == null ? null : data.startDate,
+           "to": data.endDate == null ? null : data.endDate,
+      };
+      const headers = { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+         
+      };
+      API.post('/api/Dev_timesheet/', article, { headers })
+          .then(function(response){
 
-        }
-        }
-      }else if( data.endDate == undefined){
-        for(let j=0; j<developers.length; j++){
-       
-          for(let i = 0 ; i<f.length ;i++) {
-              if(f[i]>= data.startDate.toISOString() && d[i]=== developers[j].username){
-                  console.log(f[i]+ " " + d[i])
-              let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], email:e[i], dailyeffort:da[i], ticket_id:ti[i],issuename:tn[i],date:f[i]}
-              let arr = final.push(obj)
-              setFinal([ ...final,{
-                  id : final.length,
-                  value: arr
-              }])
-              console.log(final)
-              count =  count + da[i]
-              countF= countF+ da[j]
-              daDev[i]= da[i];
-              let sortDev = daDev.sort((a,b)=>b-a);
-              let hCon= sortDev[0];
-              setHcon(hCon);
-             console.log(sortDev);
-           }
-          console.log(count + " " + hCon)  
-            setCn(count)
-        }
-     }
-      }else if( data.startDate == undefined){
-        for(let j=0; j<developers.length; j++){
-       
-          for(let i = 0 ; i<f.length ;i++) {
-              if(f[i]<= data.endDate.toISOString() && d[i]=== developers[j].username){
-                  console.log(f[i]+ " " + d[i])
-                  let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], email:e[i], dailyeffort:da[i], ticket_id:ti[i],issuename:tn[i],date:f[i]}
-                  let arr = final.push(obj)
-                  setFinal([ ...final,{
-                      id : final.length,
-                      value: arr
-                  }])
-                  console.log(final)
-                  count =  count + da[i]
-                  countF= countF+ da[j]
-                  daDev[i]= da[i];
-                  let sortDev = daDev.sort((a,b)=>b-a);
-                  let hCon= sortDev[0];
-                  setHcon(hCon);
-                  console.log(sortDev);
-           }
-
-          console.log(count + " " + hCon)  
-        
-           
-            setCn(count)
-
-        } }
-      }else{
-        for(let j=0; j<developers.length; j++){
-       
-          for(let i = 0 ; i<f.length ;i++) {
-              if(f[i]>= data.startDate.toISOString()  && f[i] <= data.endDate.toISOString() && d[i]=== developers[j].username){
-                  console.log(f[i]+ " " + d[i])
-                  let obj = {id: i,user_id: id[i], username:d[i], firstname:fn[i], email:e[i], dailyeffort:da[i], ticket_id:ti[i],issuename:tn[i],date:f[i]}
-                  let arr = final.push(obj)
-                  setFinal([ ...final,{
-                      id : final.length,
-                      value: arr
-                  }]);
-                  console.log(final)
-                  count =  count + da[i]
-                  //countF= countF+ da[j]
-                  daDev[i]= da[i];
-                  let sortDev = daDev.sort((a,b)=>b-a);   
-                  let hCon= sortDev[0];
-                  setHcon(hCon);
-                  console.log(sortDev);
-           }
-
-          console.log(count + " " + hCon)  
-          setCn(count)
-            
-        }
-        }
-    };
+            setFinal(response.data.data)
+            if(response.data.data.length ==0){
+                setNodata(true)
+            }
+          })
+          .catch((error) => console.log(error));
+      
+          
+         
   }
-    //-----------------For Collapse-------------------
-   
+ 
+
+
+  let devDrop = submittedData["devDropDown"]
   
+        let dailyEffort = final.map(e=> e.dailyeffort)
+          
+          let totalHours_count =0;
+          for(let i=0; i<dailyEffort.length; i++){
+            totalHours_count = totalHours_count +dailyEffort[i];
+           
+          }
+          let sortDev = dailyEffort.sort((a,b)=>b-a);
+          let highestCon= sortDev[0];
+          let lowestCon = sortDev[dailyEffort.length-1]
+          
     const [open, setOpen] = useState(false);
     
-  
+ 
     
     const columns = React.useMemo(
         () => [
-           
-            {
-                Header:'User Name',
-                accessor: 'username'
-            },
-            {
-                Header:'First Name',
-                accessor: 'firstname'
-            },
-           
-            {
-                Header:'Daily Effort',
-                accessor: 'dailyeffort',
-                
-            },
-            {
-                Header:'Ticket ID',
-                accessor: 'ticket_id'
-            },
-            {
-              Header:'Issue Title',
-              accessor: 'issuename'
-            },
-            {
-              Header:'Date',
-              accessor: 'date'
-            },
-            {
-              Header: '',
-              id: 'delete',
-           
-
-            Cell: (tableProps) => (
-              <Button className="btn-danger"
-              onClick={() => {
-                // ES6 Syntax use the rvalue if your data is an array.
-                const dataCopy = [...final];
-             
-                dataCopy.splice(tableProps.row.index,1 );
-                setFinal(dataCopy);
-              }} > 
-            <RiDeleteBin6Line />
-           </Button>
-
-            ),
+               
+        {
+            Header:'Project',
+            accessor: 'project_name'
+        },
+        {
+          Header:'Date',
+          accessor: 'date'
+        },
+     
+        {
+            Header:'User Name',
+            accessor: 'developer_name'
+        },
+        {
+          Header:'Ticket ID',
+          accessor: 'ticket'
+        },
+        {
+          Header:'Issue Title',
+          accessor: 'issue_title'
+        },
+        {
+            Header:'Daily Effort',
+            accessor: 'dailyeffort',
             
         },
+    //     {
+    //       Header: '',
+    //       id: 'delete',
+    //       accessor: (str) => "delete",
+
+    //     Cell: (tableProps) => (
+    //       <Button className="btn-danger"
+    //       onClick={() => {
+       
+    //         const dataCopy = [...final];
+          
+    //         dataCopy.splice(tableProps.row.index,1 );
+    //         setFinal(dataCopy);
+    //       }} > 
+    //     <RiDeleteBin6Line />
+    //     </Button>
+
+    //     ),
+        
+    // },
         ],
-        [final]
+        [final.data]
       );
+
       const RemoveRows = ()=>{
               const dataCopy = [final];
             
@@ -341,16 +199,49 @@ function FilreredData() {
 
       const handleClose = () => setShow(false);
       const handleShow = () => setShow(true);
+
+
+     
+
+      const [project, setProject] = useState([])
+      const [devP, setdevP] = useState([])
+
+      
+      useEffect(() => {
+        const getData = async () =>{
+            const response = await fetch(
+                " http://127.0.0.1:8000/api/Dev_Users/"
+            );
+            const res = await response.json();
+            console.log(res)
+            setdevP(res)   
+        }
+      
+          getData();
+      }, []);
+
+      useEffect(() => {
+        const getData = async () =>{
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/Projects/"
+            );
+            const res = await response.json();
+            console.log(res)
+              setProject(res)    
+        }
+      
+          getData();
+      }, []);
+      console.log(project)
     return (
         <div>
             
-            <Card className="shadow p-3 mb-5 bg-white rounded" style={{marginTop:20}}>
+            <Card className="shadow p-3 mb-5  rounded" style={{marginTop:20,backgroundColor:"rgb(240, 240, 240)"}}>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="row" >
-                            
-                       
                         <div className="col-md-3"> 
-                                        <p><b>Developer</b></p>
+                                           
+                                        <p><MdDeveloperBoard/>{" "}<b>Developer</b></p> 
                                         <Controller
                                             as={
                                             <AsyncSelect 
@@ -372,12 +263,23 @@ function FilreredData() {
                                             control={control}
                                             valueName="selected"
                                          />
-                                            
+                                              <br/>
+                                                <p><GrProjects/>{ " "}<b>Select Project</b></p>
+                                                <select ref={register} name="projectid" placeholder="Select "  className=" shadow-sm rounded form-control" style={{width:200}}>
+                                                        <option value="None"></option>
+                                                        <option value="All">All</option>
+                                                        {project.map(e=> {
+                                                            return(
+                                                                <>
+                                                                <option value={e.id} style={{padding:10}}>{e.projectname}</option>
+                                                                </>
+                                                            )
+                                                        })}
+                                                </select>
                         </div>
                         <div className="col-md-2">
                             <div className="col">
-                             
-                                  <b>From</b><IoMdArrowDropdown/>
+                            <CgCalendarDates/>  <b>From</b><IoMdArrowDropdown/>
                                   <br/>
                                   <center>
                                       <div className="form-section" style={{marginTop: 20}}>
@@ -385,14 +287,13 @@ function FilreredData() {
                                               as={
                                                   <DatePicker
                                                       id="startDate"
-                                                      //onChange={(date) => setStartDate(date)}
                                                       selected={startDate}
-                                                      //showTimeSelect
                                                       dateFormat='yyyy/MM//dd'
                                                       selectsStart
                                                       startDate={startDate}
                                                       endDate={endDate}
                                                       isClearable
+                                                      maxDate={ new Date()}
                                                       showYearDropdown
                                                       scrollableMonthYearDropdown
                                                   />
@@ -408,7 +309,7 @@ function FilreredData() {
                         </div>
                         <div className="col">
                       
-                            <b>To</b> <IoMdArrowDropdown/>
+                        <CgCalendarDates/>  <b>To</b> <IoMdArrowDropdown/>
                             <center>
                             <div className="form-section" style={{marginTop: 20}}>
                         
@@ -416,9 +317,7 @@ function FilreredData() {
                                     as={
                                         <DatePicker
                                             id="endDate"
-                                            //onChange={(date) => setEndDate(date)}
                                             selected={endDate}
-                                            //showTimeSelect
                                             dateFormat='yyyy/MM//dd'
                                             selectsEnd
                                             startDate={startDate}
@@ -426,6 +325,7 @@ function FilreredData() {
                                             isClearable
                                             showYearDropdown
                                             scrollableMonthYearDropdown
+                                            maxDate={ new Date()}
                                         />
                                     }
                                     name="endDate"
@@ -436,12 +336,13 @@ function FilreredData() {
                             </div>
                             </center>
                         </div>
-                        <div className="col-md-3">
+                        
+                        <div className="col-md-3" style={{margin:20}}>
                                 <Card className="shadow-sm p-3 mb-5 bg-white rounded">
                                 <h5>Total Hours : {''}  
                                
                                 <Badge pill variant="success">
-                                  {cn}  {' '} hrs {' '}  <MdTimer/>
+                                  {totalHours_count}  {' '} hrs {' '}  <MdTimer/>
                                 </Badge>{' '}
                                 
                                 </h5>
@@ -449,24 +350,24 @@ function FilreredData() {
                                 <p>Highest Contribution : {''} 
                                
                                 <Badge pill variant="warning">
-                                  {hCon} {' '} hrs  {' '}  <MdTimer/>
+                                  {highestCon} {' '} hrs  {' '}  <MdTimer/>
                                 </Badge>{' '} 
                                 </p>
                                 
-                                {/* <p>Lowest Contribution : {''} 
+                                <p>Lowest Contribution : {''} 
                                
                                 <Badge pill variant="primary">
-                                  {lCon} {' '} hrs  {' '}  <MdTimer/>
+                                  {lowestCon} {' '} hrs  {' '}  <MdTimer/>
                                   </Badge>
                                 </p>
-                                 */}
+                                
                                  <Button className="btn-danger"
                                  onClick={handleShow}
                                  >Delete All Rows{" "}  <RiDeleteBin6Line/></Button>
                                 </Card>
                                 <Modal
                                   show={show}
-                                  onHide={handleClose}
+                                  onHide={noddataHandle}
                                   backdrop="static"
                                   keyboard={false}
                                 >
@@ -475,6 +376,7 @@ function FilreredData() {
                                   </Modal.Header>
                                   <Modal.Body>
                                   <MdQuestionAnswer/>{' '}<b>Developer Timesheet</b><br/>
+                                  <center><h1><FaBuromobelexperte size={30}/></h1></center>
                                    This will remove all the filtered rows in the table. Do you want to continue?
                                   </Modal.Body>
                                   <Modal.Footer>
@@ -488,8 +390,35 @@ function FilreredData() {
                         <div className="col-md-2"> 
                               <center>
                               <button type="submit"  className="btn btn-info " style={{float: 'right', marginTop:30}} style={{margin:3}} >
-                                  Filter
+                               Filter
                               </button>
+                              <Modal
+                                  show={nodata}
+                                  onHide={noddataHandle}
+                                  backdrop="static"
+                                  keyboard={false}
+                                  className="rounded"
+                                >
+                                 
+                                  <Modal.Body>
+                                <center>
+                               
+                                 <h1>  Oops</h1>
+                                 <hr/>
+                                 <br/>
+                                    <FaBuromobelexperte size={50}/>
+                                 <h2><b>DATA NOT AVALIABLE</b></h2>
+                                    <h3> for the requested filters</h3>
+                                    </center>
+                                  </Modal.Body>
+                                
+                                    <center>
+                                    <Button variant="dark" onClick={noddataHandle}>
+                                     OK
+                                    </Button>
+                                  </center>
+                                 
+                                </Modal>
                               </center>
                         </div>
                         
@@ -497,20 +426,17 @@ function FilreredData() {
                   </form>
                   </Card>
                   <Card className="shadow-lg p-3 mb-5 bg-white rounded">
-                  
-                      <Table className="" columns={columns} data={final} />
-                    <Collapse in={open}>
-
-                    <div id="example-collapse-text" >
-                    {/* Add form   */}
-                    <Badge pill variant="primary">
-                        Add required filters       
-                    </Badge>{' '}
-                    </div>
-
-
+                          <Table className="" columns={columns} data={final} />
+                      <Collapse in={open}>
+                        <div id="example-collapse-text" >
+                          <Badge pill variant="primary">
+                              Add required filters       
+                          </Badge>{' '}
+                        </div>
                     </Collapse>
+                  
                   </Card>
+                
         </div>
     )
 }
@@ -628,8 +554,7 @@ export default FilreredData;
       rows,
       prepareRow,
       exportData,
-      selectedFlatRows,
-      state: { selectedRowIds },
+     
     } = useTable(
       {
         columns,
@@ -649,7 +574,7 @@ export default FilreredData;
       <>
       
       <div className="col-md-2" style={{float: 'left', marginTop: 10}}>
-                      <Card className="rounded">    
+                      
                           <NavDropdown title="Export"  className="" id="basic-nav-dropdown">
                          
                           <NavDropdown.Item href="#"><BsDownload />{' '}
@@ -687,7 +612,7 @@ export default FilreredData;
                           </NavDropdown>
                           { ' ' }  
                        
-                          </Card>
+                       
          
         </div>
         
@@ -695,7 +620,7 @@ export default FilreredData;
         <table className="table " {...getTableProps()}>
           <thead className="thead-dark">
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr {...headerGroup.getHeaderGroupProps()} >
                 {headerGroup.headers.map((column) => (
                 
                   <th {...column.getHeaderProps()}>
@@ -717,7 +642,7 @@ export default FilreredData;
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()} className="bg-white">
+          <tbody {...getTableBodyProps()} className="" style={{backgroundColor:"rgb(240, 240, 240)"}}>
             {rows.map((row, i) => {
               prepareRow(row);
               return (

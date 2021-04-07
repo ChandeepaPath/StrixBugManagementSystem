@@ -9,6 +9,7 @@ import ReportLayout from '../../Components/Report/ReportLayout';
 import DevTimesheetDash from '../../Components/Report/Developer_Timesheet/DevTimesheetDash'
 import AlldataTable from '../../Components/Report/Developer_Timesheet/AllDataTable/AlldataTable';
 import FilreredData from '../../Components/Report/Developer_Timesheet/FilteredTable/FilreredData';
+import BugSumDashboard from '../../Components/Report/Full_Bug_Summary/BugSumDashboard';
 
 function DashboardManager() {
 
@@ -21,6 +22,7 @@ function DashboardManager() {
       <Route exact path="/Manager/IssueBacklogBMS/:pid">
         <BMSLayout page={<IssueBacklogBMS/>}/>
       </Route>
+
       <Route exact path="/Manager/ReportDashboard">
         <ReportLayout page={<ProjectReportDashboard/>}/>
       </Route>
@@ -33,6 +35,11 @@ function DashboardManager() {
       <Route exact path="/Manager/DeveloperTimesheeet/FilreredTable">
         <ReportLayout page={<FilreredData/>}/>
       </Route>
+
+      <Route exact path="/Manager/Bug_Summary">
+        <ReportLayout page={<BugSumDashboard/>}/>
+      </Route>
+
       <Route exact path="/Manager/SprintBacklog/">
         <BMSLayout/>
       </Route>

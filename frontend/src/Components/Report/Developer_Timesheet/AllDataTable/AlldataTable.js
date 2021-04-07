@@ -18,7 +18,7 @@ function AlldataTable() {
     useEffect(() => {
     const getData = async () =>{
         const response = await fetch(
-            "http://127.0.0.1:8000/api/Dev_Table/"
+            "http://127.0.0.1:8000/api/Dev_timesheet/"
         );
         const res = await response.json();
         console.log(res)
@@ -31,31 +31,34 @@ function AlldataTable() {
 const columns = React.useMemo(
     () => [
        
-        {
-            Header:'User Name',
-            accessor: 'username'
-        },
-        {
-            Header:'First Name',
-            accessor: 'firstname'
-        },
-       
-        {
-            Header:'Daily Effort',
-            accessor: 'dailyeffort'
-        },
-        {
-          Header:'Ticket ID',
-          accessor: 'ticket_id'
-         },
-        {
-          Header:'Issue Title',
-          accessor: 'issuename'
-        },
-        {
-            Header:'Date',
-            accessor: 'date'
-        },
+      {
+        Header:'Project',
+        accessor: 'project_name'
+    },
+    {
+      Header:'Date',
+      accessor: 'date'
+    },
+ 
+    {
+        Header:'User Name',
+        accessor: 'developer_name'
+    },
+    {
+      Header:'Ticket ID',
+      accessor: 'ticket'
+    },
+    {
+      Header:'Issue Title',
+      accessor: 'issue_title'
+    },
+    {
+        Header:'Daily Effort',
+        accessor: 'dailyeffort',
+        
+    },
+  
+   
        
     ],
     []
@@ -150,41 +153,40 @@ function Table({ columns, data }) {
       <>
       
      <div className="col-md-2 " style={{float: 'right', marginTop: 10}}>
-                          <Card className=" bg-white rounded">
-                          <NavDropdown title="Export"  className="" id="basic-nav-dropdown">
+                  <NavDropdown title="Export"  className="" id="basic-nav-dropdown">
                           <NavDropdown.Item href="#"><BsDownload /> {' '}
-                          <span
-                              onClick={() => {
-                                exportData("pdf", true);
-                              }}
-                            >
-                              Export All as PDF
-                            </span>{'  '}
-                            <FaFilePdf/>
+                                <span
+                                  onClick={() => {
+                                    exportData("pdf", true);
+                                  }}
+                                >
+                                  Export All as PDF
+                                </span>{'  '}
+                              <FaFilePdf/>
                           </NavDropdown.Item>
-                         <NavDropdown.Item href="#"><BsDownload /> {' '}
-                          <span
-                            onClick={() => {
-                              exportData("csv", false);
-                            }}
-                          >
-                            Export All as CSV
-                          </span>{'  '}
-                          <FaFileCsv/>
+                          <NavDropdown.Item href="#"><BsDownload /> {' '}
+                                <span
+                                  onClick={() => {
+                                    exportData("csv", false);
+                                  }}
+                                >
+                                  Export All as CSV
+                                </span>{'  '}
+                              <FaFileCsv/>
                           </NavDropdown.Item>
                           <NavDropdown.Item href="#"><BsDownload />{' '}
-                              <span
-                                onClick={() => {
-                                  exportData("xlsx", true);
-                                }}
-                              >
-                                Export All as xlsx
-                              </span>{'  '}
-                              <FaFileExcel/>
+                                  <span
+                                    onClick={() => {
+                                      exportData("xlsx", true);
+                                    }}
+                                  >
+                                    Export All as xlsx
+                                  </span>{'  '}
+                                <FaFileExcel/>
                           </NavDropdown.Item>
                           
-                          </NavDropdown>
-                          </Card>
+                </NavDropdown>
+                 
                         </div>
                 
         <table className="table" {...getTableProps()}>
@@ -210,7 +212,7 @@ function Table({ columns, data }) {
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()} className="bg-white">
+          <tbody {...getTableBodyProps()} className="shadow rounded" style={{backgroundColor:"rgb(240, 240, 240)"}}>
             {rows.map((row, i) => {
               prepareRow(row);
               return (
@@ -226,7 +228,7 @@ function Table({ columns, data }) {
           </tbody>
         </table>
         <br />
-        <div>Showing the  results of {rows.length} rows</div>
+        <div style={{margin:20}}>Showing the  results of {rows.length} rows</div>
       </>
     );
   }
